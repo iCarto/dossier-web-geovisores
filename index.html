@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>iCarto - Soluciones de Visualización Cartográfica Web</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      @font-face {
+        font-family: "Ikaros Sans";
+        src: url("https://db.onlinewebfonts.com/t/65d7e8b0754dfdda61108afbafba0869.woff2")
+          format("woff2");
+      }
+      :root {
+        --icarto-cyan: #00bec5;
+        --icarto-dark: #333333;
+        --icarto-bg: #f4f7f6;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        color: var(--icarto-dark);
+        background-color: var(--icarto-bg);
+        scroll-behavior: smooth;
+      }
+      .bg-icarto-dark {
+        background-color: var(--icarto-dark);
+      }
+      .text-icarto-cyan {
+        color: var(--icarto-cyan);
+      }
+      .bg-icarto-cyan {
+        background-color: var(--icarto-cyan);
+      }
+
+      .hero-pattern {
+        background-color: var(--icarto-dark);
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 86c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm66-3c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zm-46-45c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm26 18c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm16-18c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm-33-26c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm-38 18c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm44-10c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm-28 32c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm28 20c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm-22 22c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm-20-44c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm-6-20c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm34 40c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm2-56c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm-8 8c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1zm15 44c.552 0 1-.448 1-1s-.448-1-1-1-1 .448-1 1 .448 1 1 1z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+      }
+
+      .curved-edge {
+        border-radius: 0 0 50% 50% / 0 0 15% 15%;
+      }
+
+      .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .transition-all {
+        transition: all 0.3s ease;
+      }
+    </style>
+  </head>
+  <body class="overflow-x-hidden">
+    <!-- Header / Logo Real Recreado -->
+    <nav
+      class="bg-icarto-dark py-6 px-10 flex justify-between items-center sticky top-0 z-50 shadow-md"
+    >
+      <a href="#" class="flex items-center gap-2">
+        <img src="assets/only-logo.png" alt="iCarto" class="h-10 w-auto" />
+        <span
+          class="text-white text-[32px]"
+          style="
+            font-family: &quot;Ikaros Sans&quot;, sans-serif;
+            font-weight: normal;
+            letter-spacing: 0.05em;
+          "
+          >icarto</span
+        >
+      </a>
+      <div
+        class="hidden md:flex gap-8 text-sm font-semibold uppercase tracking-wider text-white/80 items-center"
+      >
+        <a href="#inicio" class="hover:text-icarto-cyan transition-all"
+          >Inicio</a
+        >
+        <a href="#tecnologia" class="hover:text-icarto-cyan transition-all"
+          >Tecnología</a
+        >
+        <a href="#metodologia" class="hover:text-icarto-cyan transition-all"
+          >Metodología</a
+        >
+        <a href="#funciones" class="hover:text-icarto-cyan transition-all"
+          >Funcionalidades</a
+        >
+        <a href="#portfolio" class="hover:text-icarto-cyan transition-all"
+          >Proyectos</a
+        >
+        <a
+          href="#presupuesto"
+          class="bg-icarto-cyan text-white px-5 py-2 rounded-full hover:bg-white hover:text-icarto-dark transition-all shadow-sm"
+          >Presupuesto</a
+        >
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header
+      id="inicio"
+      class="hero-pattern text-white pt-24 pb-40 px-6 curved-edge text-center"
+    >
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
+          Soluciones de Visualización
+          <span class="text-icarto-cyan">Cartográfica Web</span>
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-300 font-light mb-10">
+          Transformamos su información territorial en el activo más potente para
+          la toma de decisiones estratégicas.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a
+            href="#funciones"
+            class="bg-icarto-cyan px-8 py-4 rounded-lg font-bold hover:bg-white hover:text-icarto-dark transition-all shadow-lg"
+            >Explorar Funcionalidades</a
+          >
+          <a
+            href="#metodologia"
+            class="border-2 border-white/30 px-8 py-4 rounded-lg font-bold hover:bg-white/10 transition-all"
+            >Nuestro Enfoque</a
+          >
+        </div>
+      </div>
+    </header>
+
+    <!-- Statistics/Quick Info -->
+    <section
+      class="max-w-6xl mx-auto -mt-20 px-6 grid grid-cols-1 md:grid-cols-3 gap-8"
+    >
+      <div
+        class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-icarto-cyan card-hover transition-all"
+      >
+        <div class="text-icarto-cyan mb-4">
+          <svg
+            class="w-10 h-10"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.040L3 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622l-.618-3.040z"
+            ></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold mb-2 uppercase tracking-tight">
+          Software Libre
+        </h3>
+        <p class="text-gray-600">
+          Total independencia tecnológica y libertad absoluta para evolucionar
+          sus sistemas sin licencias.
+        </p>
+      </div>
+      <div
+        class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-icarto-cyan card-hover transition-all"
+      >
+        <div class="text-icarto-cyan mb-4">
+          <svg
+            class="w-10 h-10"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 10V3L4 14h7v7l9-11h-7z"
+            ></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold mb-2 uppercase tracking-tight">
+          Rendimiento
+        </h3>
+        <p class="text-gray-600">
+          Arquitecturas de última generación para la gestión de datos espaciales
+          masivos sin tiempos de espera.
+        </p>
+      </div>
+      <div
+        class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-icarto-cyan card-hover transition-all"
+      >
+        <div class="text-icarto-cyan mb-4">
+          <svg
+            class="w-10 h-10"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+            ></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold mb-2 uppercase tracking-tight">
+          Multiplataforma
+        </h3>
+        <p class="text-gray-600">
+          Experiencia de usuario unificada en escritorio, tablets y dispositivos
+          móviles de campo.
+        </p>
+      </div>
+    </section>
+
+    <!-- Technological Approach Section - REESTRUCTURADA -->
+    <section id="tecnologia" class="py-24 px-6 max-w-7xl mx-auto">
+      <!-- Texto de entrada a ancho completo -->
+      <div class="text-center mb-16">
+        <span
+          class="text-icarto-cyan font-bold tracking-widest uppercase text-sm"
+          >Nuestro Stack Tecnológico</span
+        >
+        <h2 class="text-4xl font-extrabold mt-2 mb-6">
+          Componentes de vanguardia para sistemas territoriales críticos
+        </h2>
+        <p class="text-gray-600 text-lg max-w-4xl mx-auto font-light">
+          Seleccionamos tecnologías líderes en el ecosistema Open Source para
+          garantizar robustez, escalabilidad y una experiencia de visualización
+          fluida, eliminando cualquier dependencia de proveedores privativos.
+        </p>
+      </div>
+
+      <!-- Grid equilibrado de Tarjetas e Imagen -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+        <!-- Columna de Tarjetas -->
+        <div class="flex flex-col justify-between gap-6">
+          <!-- React -->
+          <div
+            class="p-6 bg-white rounded-2xl shadow-sm border border-gray-100 flex gap-5 items-start flex-1 card-hover transition-all"
+          >
+            <div
+              class="w-12 h-12 flex-shrink-0 bg-sky-50 rounded-xl flex items-center justify-center text-sky-500"
+            >
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM12 4.6c-4.08 0-7.4 3.32-7.4 7.4s3.32 7.4 7.4 7.4 7.4-3.32 7.4-7.4-3.32-7.4-7.4-7.4zm0 16.8c-5.18 0-9.4-4.22-9.4-9.4s4.22-9.4 9.4-9.4 9.4 4.22 9.4 9.4-4.22 9.4-9.4 9.4z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-bold text-lg mb-1">React</h4>
+              <p class="text-gray-500 text-sm leading-relaxed">
+                Biblioteca central para interfaces dinámicas que permite una
+                gestión eficiente de los datos en tiempo real.
+              </p>
+            </div>
+          </div>
+          <!-- MUI -->
+          <div
+            class="p-6 bg-white rounded-2xl shadow-sm border border-gray-100 flex gap-5 items-start flex-1 card-hover transition-all"
+          >
+            <div
+              class="w-12 h-12 flex-shrink-0 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500"
+            >
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M0 0h24v24H0V0z" fill="none" />
+                <path
+                  d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM5 4.5h14c.28 0 .5.22.5.5v14c0 .28-.22.5-.5.5H5c-.28 0-.5-.22-.5-.5V5c0-.28.22-.5.5-.5z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-bold text-lg mb-1">Material UI (MUI)</h4>
+              <p class="text-gray-500 text-sm leading-relaxed">
+                Garantiza una estética limpia y usable, cumpliendo con los
+                estándares de diseño corporativo más exigentes.
+              </p>
+            </div>
+          </div>
+          <!-- Leaflet -->
+          <div
+            class="p-6 bg-white rounded-2xl shadow-sm border border-gray-100 flex gap-5 items-start flex-1 card-hover transition-all"
+          >
+            <div
+              class="w-12 h-12 flex-shrink-0 bg-green-50 rounded-xl flex items-center justify-center text-green-500"
+            >
+              <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-bold text-lg mb-1">Leaflet</h4>
+              <p class="text-gray-500 text-sm leading-relaxed">
+                El motor cartográfico más ligero y potente para la visualización
+                de capas GIS sin sobrecargar el navegador.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna de Imagen (Mockup de Navegador) -->
+        <div
+          class="bg-icarto-dark rounded-3xl p-1 shadow-2xl overflow-hidden self-stretch flex flex-col"
+        >
+          <div
+            class="bg-gray-100 rounded-[1.4rem] overflow-hidden flex-1 flex flex-col"
+          >
+            <div
+              class="bg-gray-200 border-b border-gray-300 p-3 flex items-center justify-between"
+            >
+              <div class="flex gap-1.5">
+                <div class="w-3 h-3 rounded-full bg-red-400/80"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-400/80"></div>
+                <div class="w-3 h-3 rounded-full bg-green-400/80"></div>
+              </div>
+              <div
+                class="bg-white border border-gray-300 rounded px-4 py-1 text-[10px] text-gray-400 w-2/3 text-center"
+              >
+                visor.icarto.es/analisis-territorial
+              </div>
+            </div>
+            <div class="flex-1 overflow-hidden relative group">
+              <img
+                src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=800"
+                alt="Map interface"
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div class="absolute inset-0 bg-icarto-dark/10"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- METODOLOGÍA DE TRABAJO - DISEÑO CON ICONOS -->
+    <section id="metodologia" class="py-24 px-6 bg-white overflow-hidden">
+      <div class="max-w-7xl mx-auto text-center">
+        <span
+          class="text-icarto-cyan font-bold tracking-widest uppercase text-sm"
+          >Garantía de éxito</span
+        >
+        <h2
+          class="text-4xl font-extrabold mt-2 mb-20 text-icarto-dark uppercase"
+        >
+          Metodología de Trabajo
+        </h2>
+
+        <div class="relative">
+          <!-- Línea de conexión de fondo (Desktop) -->
+          <div
+            class="hidden md:block absolute top-12 left-[10%] right-[10%] h-0.5 bg-gray-200 z-0"
+          ></div>
+
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-12 relative z-10">
+            <!-- Paso 1: Análisis -->
+            <div class="flex flex-col items-center group">
+              <div
+                class="w-24 h-24 bg-icarto-cyan text-white rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform mb-6"
+              >
+                <svg
+                  class="w-12 h-12"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  ></path>
+                </svg>
+              </div>
+              <h4 class="font-bold text-xl mb-3 text-icarto-dark">Análisis y consultoría</h4>
+              <p class="text-gray-500 text-sm max-w-[200px] leading-relaxed">
+                Nuestro trabajo no empieza con código, sino escuchando. Identificamos las fuentes de datos y definimos los flujos de información necesarios.
+              </p>
+            </div>
+            <!-- Paso 2: Construcción -->
+            <div class="flex flex-col items-center group">
+              <div
+                class="w-24 h-24 bg-icarto-cyan text-white rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform mb-6"
+              >
+                <svg
+                  class="w-12 h-12"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                  ></path>
+                </svg>
+              </div>
+              <h4 class="font-bold text-xl mb-3 text-icarto-dark">
+                Desarrollo ágil
+              </h4>
+              <p class="text-gray-500 text-sm max-w-[200px] leading-relaxed">
+                Desarrollo modular bajo metodología ágil con entregas
+                periódicas.
+              </p>
+            </div>
+            <!-- Paso 3: Calidad -->
+            <div class="flex flex-col items-center group">
+              <div
+                class="w-24 h-24 bg-icarto-cyan text-white rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform mb-6"
+              >
+                <svg
+                  class="w-12 h-12"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.040L3 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622l-.618-3.040z"
+                  ></path>
+                </svg>
+              </div>
+              <h4 class="font-bold text-xl mb-3 text-icarto-dark">Calidad</h4>
+              <p class="text-gray-500 text-sm max-w-[200px] leading-relaxed">
+                Aseguramos que el visor cumpla con las políticas de accesibilidad, seguridad y rendimiento web más exigentes.
+              </p>
+            </div>
+            <!-- Paso 4: Entrega -->
+            <div class="flex flex-col items-center group">
+              <div
+                class="w-24 h-24 bg-icarto-cyan text-white rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform mb-6"
+              >
+                <svg
+                  class="w-12 h-12"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                  ></path>
+                </svg>
+              </div>
+              <h4 class="font-bold text-xl mb-3 text-icarto-dark">Transferencia de conocimiento</h4>
+              <p class="text-gray-500 text-sm max-w-[200px] leading-relaxed">
+                Entregamos el código fuente y proporcionamos la documentación necesaria para que el cliente mantenga el control total sobre su herramienta.
+              </p>
+            </div>
+            <!-- Paso 5: Evolución -->
+            <div class="flex flex-col items-center group">
+              <div
+                class="w-24 h-24 bg-icarto-dark text-icarto-cyan rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform border-4 border-icarto-cyan mb-6"
+              >
+                <svg
+                  class="w-12 h-12"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                  ></path>
+                </svg>
+              </div>
+              <h4 class="font-bold text-xl mb-3 text-icarto-dark">Evolución y acompañamiento</h4>
+              <p class="text-gray-500 text-sm max-w-[200px] leading-relaxed">
+                Nuestro modelo incluye asistencia constante y la capacidad de realizar mejoras o nuevas funcionalidades.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="mt-24 p-8 bg-icarto-dark text-white rounded-3xl max-w-4xl mx-auto shadow-2xl"
+        >
+          <p class="text-lg font-light leading-relaxed">
+            "Ponemos el foco en las <strong>personas</strong>: la tecnología
+            es un medio que debe mejorar los procesos y resolver las necesidades reales."
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="funciones" class="bg-icarto-dark py-24 px-6 text-white">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-extrabold mb-4">
+            Funcionalidades Habituales
+          </h2>
+          <p class="text-gray-400 max-w-2xl mx-auto">
+            Sistemas equipados con herramientas inteligentes para convertir
+            datos complejos en conocimiento operativo.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div
+            class="bg-white/5 p-6 rounded-xl border border-white/10 hover:border-icarto-cyan transition-all"
+          >
+            <div
+              class="w-12 h-12 bg-icarto-cyan/20 rounded-lg flex items-center justify-center text-icarto-cyan mb-6"
+            >
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                ></path>
+              </svg>
+            </div>
+            <h4 class="text-xl font-bold mb-2">Control de Capas</h4>
+            <p class="text-gray-400 text-sm">
+              Organización jerárquica y transparencia ajustable de información
+              temática.
+            </p>
+          </div>
+          <div
+            class="bg-white/5 p-6 rounded-xl border border-white/10 hover:border-icarto-cyan transition-all"
+          >
+            <div
+              class="w-12 h-12 bg-icarto-cyan/20 rounded-lg flex items-center justify-center text-icarto-cyan mb-6"
+            >
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+            </div>
+            <h4 class="text-xl font-bold mb-2">Buscador Predictivo</h4>
+            <p class="text-gray-400 text-sm">
+              Localización inmediata de activos o parcelas mediante
+              autocompletado inteligente.
+            </p>
+          </div>
+          <div
+            class="bg-white/5 p-6 rounded-xl border border-white/10 hover:border-icarto-cyan transition-all"
+          >
+            <div
+              class="w-12 h-12 bg-icarto-cyan/20 rounded-lg flex items-center justify-center text-icarto-cyan mb-6"
+            >
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                ></path>
+              </svg>
+            </div>
+            <h4 class="text-xl font-bold mb-2">Dashboards GIS</h4>
+            <p class="text-gray-400 text-sm">
+              Estadísticas vinculadas directamente a los elementos visualizados
+              en el mapa.
+            </p>
+          </div>
+          <div
+            class="bg-white/5 p-6 rounded-xl border border-white/10 hover:border-icarto-cyan transition-all"
+          >
+            <div
+              class="w-12 h-12 bg-icarto-cyan/20 rounded-lg flex items-center justify-center text-icarto-cyan mb-6"
+            >
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                ></path>
+              </svg>
+            </div>
+            <h4 class="text-xl font-bold mb-2">Expediente Digital</h4>
+            <p class="text-gray-400 text-sm">
+              Vinculación de objetos con PDFs, imágenes de campo o bases de
+              datos externas.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="despliegue" class="py-24 px-6 bg-white">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col lg:flex-row items-center gap-16">
+          <div class="lg:w-1/2">
+            <span
+              class="text-icarto-cyan font-bold tracking-widest uppercase text-sm"
+              >Flexibilidad Máxima</span
+            >
+            <h2 class="text-4xl font-extrabold mt-2 mb-6 text-icarto-dark">
+              Formas de Despliegue
+            </h2>
+            <p class="text-gray-600 text-lg mb-8 leading-relaxed">
+              Nos adaptamos totalmente a la política informática y de seguridad
+              de cada cliente, garantizando que el visor GIS se integre
+              perfectamente en su entorno operativo.
+            </p>
+
+            <div class="space-y-8">
+              <div class="flex gap-6">
+                <div
+                  class="w-14 h-14 bg-icarto-cyan/10 rounded-2xl flex items-center justify-center text-icarto-cyan flex-shrink-0"
+                >
+                  <svg
+                    class="w-8 h-8"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                    ></path>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="text-xl font-bold text-icarto-dark mb-2">
+                    On-Premise (Infraestructura Propia)
+                  </h4>
+                  <p class="text-gray-600 text-sm">
+                    Integramos el visor directamente en los servidores del
+                    cliente. Ideal para organizaciones con políticas de datos
+                    sensibles que requieren control total sobre el hardware.
+                  </p>
+                </div>
+              </div>
+              <div class="flex gap-6">
+                <div
+                  class="w-14 h-14 bg-icarto-cyan/10 rounded-2xl flex items-center justify-center text-icarto-cyan flex-shrink-0"
+                >
+                  <svg
+                    class="w-8 h-8"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
+                    ></path>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="text-xl font-bold text-icarto-dark mb-2">
+                    Cloud (Soluciones en la Nube)
+                  </h4>
+                  <p class="text-gray-600 text-sm">
+                    Externalización total de la infraestructura. Nosotros
+                    gestionamos el almacenamiento y el despliegue para que el
+                    visor esté disponible online sin preocupaciones de hardware.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="lg:w-1/2">
+            <div
+              class="bg-gray-50 p-10 rounded-[3rem] border border-gray-100 relative overflow-hidden"
+            >
+              <div
+                class="absolute -right-10 -bottom-10 w-40 h-40 bg-icarto-cyan opacity-5 rounded-full"
+              ></div>
+              <h4 class="text-2xl font-bold text-icarto-dark mb-6">
+                Soporte y mantenimiento
+              </h4>
+              <ul class="space-y-4">
+                <li class="flex items-center gap-3 text-gray-700 font-medium">
+                  <svg
+                    class="w-5 h-5 text-icarto-cyan"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  Garantía de Funcionamiento: Resolución de incidencias y
+                  ajustes técnicos para asegurar la disponibilidad del sistema.
+                </li>
+                <li class="flex items-center gap-3 text-gray-700 font-medium">
+                  <svg
+                    class="w-5 h-5 text-icarto-cyan"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  Actualización Continua: Adaptación del visor ante
+                  actualizaciones de navegadores o cambios en los servicios de
+                  datos externos (WMS/WFS).
+                </li>
+                <li class="flex items-center gap-3 text-gray-700 font-medium">
+                  <svg
+                    class="w-5 h-5 text-icarto-cyan"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  Evolución Funcional: Capacidad para implementar nuevas
+                  herramientas o capas de información según crezcan los
+                  objetivos del proyecto.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-24 px-6 bg-gray-50">
+      <div class="max-w-7xl mx-auto">
+        <h2
+          class="text-4xl font-extrabold mb-16 text-icarto-dark text-center md:text-left"
+        >
+          Casos de Éxito
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <div class="group">
+            <div
+              class="overflow-hidden rounded-2xl mb-6 shadow-lg bg-gray-100 aspect-[4/3]"
+            >
+              <img
+                src="assets/marplan.png"
+                alt="Mar Plan"
+                class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
+              />
+            </div>
+            <h4 class="text-2xl font-bold mb-2 text-icarto-dark">Mar Plan</h4>
+            <p
+              class="text-gray-500 mb-4 uppercase text-xs font-bold tracking-widest"
+            >
+              Xunta de Galicia
+            </p>
+            <p class="text-gray-600">
+              Visualización avanzada para la gestión de la actividad acuícola.
+            </p>
+          </div>
+          <div class="group">
+            <div
+              class="overflow-hidden rounded-2xl mb-6 shadow-lg bg-gray-100 aspect-[4/3]"
+            >
+              <img
+                src="assets/isocronas.png"
+                alt="Isocronas"
+                class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
+              />
+            </div>
+            <h4 class="text-2xl font-bold mb-2 text-icarto-dark">Isocronas</h4>
+            <p
+              class="text-gray-500 mb-4 uppercase text-xs font-bold tracking-widest"
+            >
+              Diputación Almería
+            </p>
+            <p class="text-gray-600">
+              Visor geográfico para visualización de POIs basado en isócronas.
+            </p>
+          </div>
+          <div class="group">
+            <div
+              class="overflow-hidden rounded-2xl mb-6 shadow-lg bg-gray-100 aspect-[4/3]"
+            >
+              <img
+                src="assets/sepras.png"
+                alt="SEPRAS"
+                class="w-full h-full object-cover group-hover:scale-110 transition-all duration-500"
+              />
+            </div>
+            <h4 class="text-2xl font-bold mb-2 text-icarto-dark">SEPRAS</h4>
+            <p
+              class="text-gray-500 mb-4 uppercase text-xs font-bold tracking-widest"
+            >
+              Paraguay
+            </p>
+            <p class="text-gray-600">
+              Sistema de monitoreo de instalación de abastecimientos y
+              saneamientos rurales.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section id="presupuesto" class="py-16 px-6">
+      <div
+        class="max-w-4xl mx-auto bg-icarto-cyan text-white p-12 rounded-3xl shadow-2xl relative overflow-hidden text-center"
+      >
+        <div class="relative z-10">
+          <h3 class="text-3xl font-extrabold mb-6">¿Cuánto me va a costar?</h3>
+          <p class="text-xl opacity-90 mb-8 font-light italic">
+            Por nuestra experiencia, este tipo de desarrollos suelen situarse en
+            una horquilla de entre 10.000 y 15.000 €. No obstante, entendemos
+            que cada proyecto es único; por ello, realizamos una valoración
+            individualizada de cada caso particular para ajustar el alcance a
+            sus objetivos reales.
+          </p>
+          <a
+            href="mailto:info@icarto.es"
+            class="inline-block bg-white text-icarto-cyan px-10 py-4 rounded-full font-bold hover:bg-icarto-dark hover:text-white transition-all shadow-xl"
+            >Solicitar Valoración Sin Compromiso</a
+          >
+        </div>
+        <div
+          class="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full"
+        ></div>
+        <div
+          class="absolute -left-20 -bottom-20 w-48 h-48 bg-white/10 rounded-full"
+        ></div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacto" class="bg-icarto-dark text-white pt-20 pb-10 px-6">
+      <div
+        class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16"
+      >
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-2">
+            <img src="assets/only-logo.png" alt="iCarto" class="h-9 w-auto" />
+            <span
+              class="text-white text-[28px]"
+              style="
+                font-family: &quot;Ikaros Sans&quot;, sans-serif;
+                font-weight: normal;
+                letter-spacing: 0.05em;
+              "
+              >icarto</span
+            >
+          </div>
+          <p class="text-gray-400 mt-6 max-w-sm italic">
+            "Convertimos la información territorial en su activo más potente
+            para la toma de decisiones."
+          </p>
+        </div>
+        <div>
+          <h4 class="text-white font-bold mb-6">Oficinas</h4>
+          <div class="space-y-4 text-sm text-gray-400">
+            <p>
+              <span class="text-white font-semibold">A Coruña (España):</span></br>
+              C/ Rafael Alberti, 13 - 1ºD </br> 15008 A Coruña </br> Tel.: +34 881 927 808
+            </p>
+            <p>
+              <span class="text-white font-semibold">El Salvador:</span></br>
+              Santa tecla, San Salvador </br> Tel.: +503 2520 0856
+            </p>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-white font-bold mb-6">Contacto</h4>
+          <div class="space-y-4 text-sm text-gray-400">
+            <p class="flex items-center gap-2">
+              <svg
+                class="w-4 h-4 text-icarto-cyan"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                ></path>
+              </svg>
+              info@icarto.es
+            </p>
+            <p class="flex items-center gap-2 font-bold text-white">
+              <svg
+                class="w-4 h-4 text-icarto-cyan"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.826a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                ></path>
+              </svg>
+              <a href="https.icarto.es">www.icarto.es</a>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        class="max-w-7xl mx-auto pt-10 border-t border-white/10 text-center text-xs text-gray-500 uppercase tracking-widest"
+      >
+        2026 Innovación, Cooperación, Cartografía e Territorio.
+      </div>
+    </footer>
+  </body>
+</html>
